@@ -163,6 +163,7 @@ export class TablesPage {
       this.allTables = [this.tablesFree, this.tablesHookah, this.tablesAdmin];
       this.orderService.addTables(this.allTables);
     console.log('ALLTABLES', this.allTables);
+      this.checkingTableStatus();
 
   }
 
@@ -185,8 +186,32 @@ export class TablesPage {
       this.showTableForHookah = true;
     } else if (this.status === 'hookah'){
       this.showTableForHookah = true;
-    } else if (this.status === 'waiier'){
+    } else if (this.status === 'waiter'){
       this.showTableForWaiters = true;
     }
   }
+
+    checkingTableStatus(){
+        let tableStatus:string;
+        let getData = this.orderService.getData();
+        let index = this.checkArrays(this.tablesFree, getData);
+        if(index !== -1){
+            console.log('index:', getData[index]);
+        }
+
+    }
+
+    checkArrays(array, arr) {
+      for(let i=0; i<array.length; i++){
+          for(let j=0; j<arr.length; j++){
+              if(array[i]['name'] === arr[j]['name']){
+                  console.log('i:', i);
+                  return i;
+              } else {
+                  console.log('-1', (-1));
+                  return -1;
+              }
+          }
+      }
+    }
 }

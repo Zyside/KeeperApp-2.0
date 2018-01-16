@@ -1,7 +1,6 @@
 import { ModalController} from 'ionic-angular';
 import {Component} from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
-
 import {OrderService} from "../../services/order.service";
 import {EditModalPage} from "../edit-modal/edit-modal";
 import {ChangeTableModalPage} from "../change-table-modal/change-table-modal";
@@ -29,8 +28,9 @@ export class EditTablePage {
   totalScoreService:any;
   discountInfo:object;
   statusSum:boolean = false;
+
   constructor(public navCtrl: NavController, public navParams: NavParams,
-              private orderService:OrderService, public modalCtrl: ModalController,) {
+              private orderService:OrderService, public modalCtrl: ModalController) {
     this.table = this.navParams.get('item');
     this.totalScoreService = this.orderService.getTotalScoreService();
     this.kitchen = {
@@ -166,7 +166,7 @@ export class EditTablePage {
 
       'Классика':[
         {
-        name:'Шербет',
+        name:'Щербет',
         price:140,
           count: 0,
           sum: 0
@@ -232,11 +232,16 @@ export class EditTablePage {
       let getData = this.orderService.getData();
       let index = this.checkItemForTotalModal(table, getData);
       table['time'] = new Date();
-      table['sum'] = this.getResultPrice();
+      if(typeof this.discountInfo === 'undefined' || this.discountInfo['percent'] === 0){
+        table['sum'] = this.getResultPrice();
+      } else {
+        table['sum'] = this.checkingDiscount();
+      }
       table['note'] = this.note;
       table['order'] = totalScore;
       console.log('TABLE:',table);
       console.log('GETDATA',getData);
+        console.log('totalScore', totalScore);
         for (let key in this.totalScoreService) {
             this.totalScoreService[key]['statusOrder'] = false;
         }
@@ -244,20 +249,21 @@ export class EditTablePage {
         getData[index]['order'] = totalScore;
         getData[index]['sum'] = this.getResultPrice();
 
+      } else if(this.totalScoreService.length === 0){
+          alert('Список пуст!');
       } else {
         this.orderService.addData(table);
       }
       if(this.table['status'] ==='admin'){
           for (let key in this.totalScoreService) {
-              this.totalScoreService[key]['status'] = false;
+              this.totalScoreService[key]['status'] = true;
           }
     } else {
       for (let key in this.totalScoreService) {
         this.totalScoreService[key]['status'] = false;
       }
     }
-
-    }
+  }
 
   sendNotes() {
     let profileModal = this.modalCtrl.create(EditModalPage,{totalSum:this.getResultPrice()});
@@ -266,7 +272,11 @@ export class EditTablePage {
 
   changeTable() {
       let modal = this.modalCtrl.create(ChangeTableModalPage, {currentTable:this.table});
-      modal.present();
+      if(this.totalScoreService.length !== 0){
+          modal.present();
+      } else {
+          alert('нечего переносить');
+      }
     }
 
   checkItem(item, array) {
@@ -336,7 +346,6 @@ export class EditTablePage {
   }
 
   writingCount(item){
-    // console.log(this.totalScoreService[this.totalScoreService.indexOf(item)]['count']);
     item.sum = this.totalScoreService[this.totalScoreService.indexOf(item)]['price'] * item.count;
   }
   writingNote(item){
@@ -345,22 +354,21 @@ export class EditTablePage {
     item.note = this.totalScoreService[this.totalScoreService.indexOf(item)]['note'];
   }
 
-
-
-    showSumAndDiscount(){
+  showSumAndDiscount(){
         this.statusSum = true;
         this.checkingDiscount();
-        console.log(typeof this.discountInfo);
-    }
+  }
 
   checkingDiscount(){
-    if( typeof this.discountInfo === 'undefined'){
-      this.discountInfo={
+      if( typeof this.discountInfo === 'undefined') {
+      this.discountInfo = {
         percent:0,
         totalSum:0
-      }
-    } else if(this.discountInfo['percent'] === 0 ) {
+        }
+      } else if(this.discountInfo['percent'] === 0 && typeof this.orderService.getDiscount() === 'undefined'){
+        return
+      } else if(this.discountInfo['percent'] === 0 ) {
         this.discountInfo = this.orderService.getDiscount();
-    }
+      }
   }
 }

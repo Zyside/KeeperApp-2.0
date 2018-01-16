@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+  import { Component, Input } from '@angular/core';
 import { NavController } from "ionic-angular";
 import { EditTablePage } from "../../pages/edit-table/edit-table";
 import {OrderService} from "../../services/order.service";
@@ -9,12 +9,11 @@ import {OrderService} from "../../services/order.service";
 })
 export class TablesComponent {
 
-  @Input('tableFree') tablesFree: any;
-  @Input('tableAdmin') tablesAdmin: any;
-  @Input('tableHookah') tablesHookah: any;
+  @Input('tableFree') tablesFree: any[];
+  @Input('tableAdmin') tablesAdmin: any[];
+  @Input('tableHookah') tablesHookah: any[];
 
   constructor( public navCtrl: NavController, private orderService:OrderService) {
-      this.checkingTableStatus();
   }
 
   editTable(item) {
@@ -46,19 +45,5 @@ export class TablesComponent {
     return -1
   }
 
-  checkingTableStatus(){
-      let tableStatus:string;
-      let getData = this.orderService.getData();
-      console.log(getData,'=============',this.tablesFree,this.tablesAdmin);
-      // for(let i=0; i < getData.length;i++){
-    //   for(let j=0; j < this.tablesFree.length; j++){
-    //       if(getData()[i]['name'] === this.tablesFree[j]['name']){
-    //         tableStatus = 'busy';
-    //           console.log('xu65798i');
-    //       } else {
-    //           console.log('NEXUI');
-    //       }
-    //   }
-    // }
-  }
+
 }

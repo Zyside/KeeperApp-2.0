@@ -12,6 +12,10 @@ export class OrderService{
     this.data.push(item);
   }
 
+    deleteItemData(i){
+        this.data.splice(i,1);
+    }
+
   private finishTotalScore: any = [];
 
   getfinishTotalScore(): any {
@@ -54,6 +58,9 @@ export class OrderService{
   deleteTotalScoreService(){
     this.totalScoreService.length = 0;
   }
+    deleteItemTotalScoreService(i){
+        this.totalScoreService.splice(i,1);
+    }
 
   private tables:any;
 
@@ -74,5 +81,7 @@ export class OrderService{
   addDiscount(item){
     this.discount = item;
   }
+
+
 }
 

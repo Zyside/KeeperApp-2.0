@@ -51,9 +51,7 @@ export class ChangeTablePage {
                 this.tableWithOrder[this.tableWithOrder.indexOf(linkItem)]['count'] -= 1;
                 console.log('this.tableWithOrder.indexOf(linkItem)[\'count\']', this.tableWithOrder.indexOf(linkItem));
                 console.log('this.tableWithOrder,', this.tableWithOrder);
-                if (this.tableWithOrder[this.tableWithOrder.indexOf(linkItem)]['count'] === 0) {
-                    this.tableWithOrder.splice(this.tableWithOrder.indexOf(linkItem), 1);
-                }
+
                 this.changedTable[index]['count'] += 1;
                 this.changedTable[index]['sum'] += order['price'];
             }
@@ -63,12 +61,16 @@ export class ChangeTablePage {
             this.changedTable[this.changedTable.indexOf(order)]['sum'] = 2 * this.changedTable[this.changedTable.indexOf(order)]['price'];
             this.tableWithOrder[this.tableWithOrder.indexOf(linkItem)]['sum'] -= order['price'];
             this.tableWithOrder[this.tableWithOrder.indexOf(linkItem)]['count'] -= 1;
+
         }
         if (order.count !== 0) {
             order['count'] -= 1;
             order.sum -= order.price;
         } else {
             return;
+        }
+        if (this.tableWithOrder[this.tableWithOrder.indexOf(linkItem)]['sum'] === 0) {
+            this.tableWithOrder.splice(this.tableWithOrder.indexOf(linkItem), 1);
         }
     }
 
@@ -91,6 +93,7 @@ export class ChangeTablePage {
             this.tableWithOrder[this.tableWithOrder.indexOf(order)]['sum'] = 2 * this.tableWithOrder[this.tableWithOrder.indexOf(order)]['price'];
             this.changedTable[this.changedTable.indexOf(linkItem)]['sum'] -= order['price'];
             this.changedTable[this.changedTable.indexOf(linkItem)]['count'] -= 1;
+
         }
         if (order.count !== 0) {
             order['count'] -= 1;
@@ -98,33 +101,57 @@ export class ChangeTablePage {
         } else {
             return;
         }
+        if (this.changedTable[this.changedTable.indexOf(linkItem)]['sum'] === 0) {
+            this.changedTable.splice(this.changedTable.indexOf(linkItem), 1);
+        }
     }
 
     shiftFullOrder() {
-        for(let i=0; i < this.tableWithOrder.length; i++) {
-            for(let n=0;n < this.changedTable.length; n++) {
-                if (this.tableWithOrder[i]['name'] === this.changedTable[n]['name']){
-                    this.changedTable[n]['sum'] +=this.tableWithOrder[i]['sum'];
-                    this.changedTable[n]['count'] +=this.tableWithOrder[i]['count'];
-                    console.log('------------');
-                    console.log('change', this.changedTable[i]);
-                    console.log('table', this.tableWithOrder[n]);
-                    console.log('------------');
-                    this.tableWithOrder.splice(i,1);
-                }
+        for (let i = 0; i < this.tableWithOrder.length; i++) {
+            if (this.changedTable.length !== 0) {
+                for (let n = 0; n < this.changedTable.length; n++) {
+                    if (this.tableWithOrder.length !== 0) {
+                        if (this.tableWithOrder[i]['name'] === this.changedTable[n]['name'] && this.tableWithOrder[i]['name'] !== this.changedTable[n]['name'] || this.tableWithOrder[i]['name'] === this.changedTable[n]['name']) {
+                            this.changedTable[n]['sum'] += this.tableWithOrder[i]['sum'];
+                            this.changedTable[n]['count'] += this.tableWithOrder[i]['count'];
+                        } else if(this.tableWithOrder[i]['name'] !== this.changedTable[n]['name']) {
+                            this.changedTable.push(this.tableWithOrder[i]);
+                        }
+                        } else {
+                           break;
+                        }
+                           this.tableWithOrder.splice(i, 1);
+                        }
+            } else {
+                this.changedTable = this.tableWithOrder.slice();
+                this.tableWithOrder.length = 0;
             }
-            this.changedTable.push(this.tableWithOrder[i]);
-            this.tableWithOrder.splice(i,1);
         }
-         // this.tableWithOrder.length = 0;
     }
 
 
     backShiftFullOrder() {
-        for(let u=0;u < this.changedTable.length; u++) {
-            this.tableWithOrder.push(this.changedTable[u]);
+        for (let i = 0; i < this.changedTable.length; i++) {
+            if (this.tableWithOrder.length !== 0) {
+                for (let n = 0; n < this.tableWithOrder.length; n++) {
+                    if (this.changedTable.length !== 0) {
+                        if (this.changedTable[i]['name'] === this.tableWithOrder[n]['name'] && this.changedTable[i]['name'] !== this.tableWithOrder[n]['name'] || this.changedTable[i]['name'] === this.tableWithOrder[n]['name']) {
+                            this.tableWithOrder[n]['sum'] += this.changedTable[i]['sum'];
+                            this.tableWithOrder[n]['count'] += this.changedTable[i]['count'];
+                        } else if(this.changedTable[i]['name'] !== this.tableWithOrder[n]['name']) {
+                            this.tableWithOrder.push(this.changedTable[i]);
+                        }
+                    } else {
+                        break;
+                    }
+                    this.changedTable.splice(i, 1);
+
+                }
+            } else {
+                this.tableWithOrder = this.changedTable.slice();
+                this.changedTable.length = 0;
+            }
         }
-        this.changedTable.length = 0;
     }
 
   checkItemForTotalModal(object, array) {
@@ -146,31 +173,23 @@ export class ChangeTablePage {
             this.table['time'] = new Date();
             this.table['sum'] = this.getResultPrice();
             for(let i=0;i < allOrders.length; i++) {
-                if(allOrders[i]['name'] !== this.currentTable['name']){
-                    console.log('ELSE');
-                    } else {
-                    allOrders.splice(i,1);
-                    console.log('ifallOrders', allOrders);
+                if(this.tableWithOrder.length === 0 && allOrders[i]['name'] === this.currentTable['name']){
+                    this.orderService.deleteItemData(i);
+                }
+                console.log('this.table[\'name\']',this.table);
+                console.log('allOrders[i][\'name\'] ',allOrders[i]);
+                for(let j=0; j<allOrders.length;j++) {
+                    if (allOrders[j]['name'] === this.table['name']) {
+                        this.orderService.deleteItemData(j);
                     }
                 }
-            this.orderService.addData(this.table);
 
-            let index = this.checkItem(this.table, allOrders);
-            let totalScoreService = this.orderService.getTotalScoreService();
-            if(index !== -1) {
-                this.orderService.deleteTotalScoreService();
-                for(let key in allOrders[index]['order']){
-                    this.orderService.addTotalScoreService(allOrders[index]['order'][key]);
-                    console.log('ЧТо сидит в ТОТСКОРСЕРВИСЕ ПОСЛЕ УСЛОВИЯ',this.orderService.getTotalScoreService());
-                }
-            } else {
-                totalScoreService.length = 0;
             }
+            this.orderService.addData(this.table);
+            alert('перенос был произведен успешно:)');
             this.loadingService.showLoading();
-
             this.navCtrl.push(TablesPage,{status:this.status});
             this.loadingService.closeLoading();
-
             console.log('acceptChangesTABLE',this.table);
         } else {
             alert('Стол пуст!!');
@@ -182,15 +201,17 @@ export class ChangeTablePage {
             return prev + el['sum'];
         }, 0);
     }
-    checkItem(object, array) {
-        for(let i=0; i<array.length; i++){
-            console.log('length', array.length);
-            console.log('i', i);
-            if (array[i].name === object.name){
-                return i;
+
+    checkItem(arr, array) {
+        for(let i=0; i<array.length; i++) {
+            for(let j=0; j<arr.length; j++) {
+                if (array[i].name === arr[j].name) {
+                    return i;
+                }
+                console.log('length', array.length);
+                console.log('i', i);
             }
         }
         return -1
     }
-
 }

@@ -30,6 +30,11 @@ export class ChangeTableModalPage {
     console.log('ionViewDidLoad ChangeTableModalPage');
   }
   changeTable(table){
-    this.navCtrl.push(ChangeTablePage, {table:table, currentTable:this.currentTable});
+        if(this.currentTable['name'] !== table['name']){
+            this.navCtrl.push(ChangeTablePage, {table:table, currentTable:this.currentTable});
+        } else {
+            alert('Был выбран такой же стол')
+        }
+    }
   }
-}
+

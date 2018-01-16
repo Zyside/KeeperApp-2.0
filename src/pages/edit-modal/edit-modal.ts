@@ -13,13 +13,16 @@ export class EditModalPage {
   showPay: boolean = false;
   totalSum:number;
   status:boolean = true;
+  discountInfo:object;
   constructor(public navCtrl: NavController, public navParams: NavParams, private orderService:OrderService) {
     this.totalSum = this.navParams.get('totalSum');
-
+    this.discountInfo = this.orderService.getDiscount();
+    this.checkingStatus();
   }
 
   discountButton(item:number){
       this.status = false;
+
     if(item === 5){
       this.totalSum -= this.totalSum *0.05;
     } else if(item === 10){
@@ -45,8 +48,16 @@ export class EditModalPage {
           totalSum:this.totalSum
        };
       this.orderService.addDiscount(discount);
+      console.log(this.discountInfo);
+
   }
 
+  checkingStatus(){
+      if(typeof this.discountInfo !== 'undefined'){
+          this.status = false;
+      }
+
+  }
   ionViewDidLoad() {
     console.log('ionViewDidLoad EditModalPage');
   }

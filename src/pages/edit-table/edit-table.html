@@ -88,8 +88,8 @@
             <ion-card *ngFor="let total of totalScoreService" [ngStyle]="(total.statusOrder) === false?{backgroundColor:'red'}:{backgroundColor:'white'}">
               <ion-card-header >
                 {{total.name}}
-                <input [(ngModel)]="total.note" (keyup)="writingNote(total)" type="text">
-                <ion-icon name="md-close-circle" (click)="deleteItem(total)"></ion-icon>
+                <input [(ngModel)]="total.note" [disabled]="total['status']===false" (keyup)="writingNote(total)" type="text">
+                <ion-icon name="md-close-circle"  (click)="deleteItem(total)"></ion-icon>
               </ion-card-header>
               <ion-card-content>
                 Количество:
@@ -107,15 +107,17 @@
 <ion-footer>
   <ion-grid>
     <ion-row>
-      <ion-col col-6>
-        <button ion-button (click)="showSumAndDiscount()"> Показать сумму и скидку</button>
+      <ion-col col-3>
+        <button ion-button (click)="showSumAndDiscount()"> Показать скидку </button>
       </ion-col>
-      <ion-col col-6>
+      <ion-col col-3>
         <h1> Cумма: {{getResultPrice()}} </h1>
-        <div *ngIf="statusSum">
-          <h1> Скидка: {{discountInfo.percent}} %</h1>
-          <h1> Сумма со скидкой:{{discountInfo.totalSum}}</h1>
-        </div>
+      </ion-col>
+      <ion-col col-3 *ngIf="statusSum">
+        <h1> Скидка: {{discountInfo.percent}} %</h1>
+      </ion-col>
+      <ion-col col-3 *ngIf="statusSum">
+        <h1> Сумма со скидкой:{{discountInfo.totalSum}}</h1>
       </ion-col>
     </ion-row>
   </ion-grid>
