@@ -1,11 +1,22 @@
 <ion-header>
   <ion-navbar>
-    <button ion-button menuToggle icon-only>
-      <ion-icon name='menu'></ion-icon>
-    </button>
-    <ion-title>
-        {{table.name}}
-    </ion-title>
+    <ion-grid>
+      <ion-row>
+        <ion-col col-2>
+          <ion-title>
+            {{table.name}}
+          </ion-title>
+        </ion-col>
+        <ion-col col-10>
+          <button ion-button color="light" (click)="sendToTotalModal()">Пречек</button>
+          <button ion-button color="light">Выбить чек</button>
+          <button ion-button color="danger">Отмена чека</button>
+          <button ion-button>Наличные</button>
+          <button ion-button>Терминал</button>
+          <button ion-button (click)="changeTable()">Перенести</button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   </ion-navbar>
 </ion-header>
 
@@ -80,11 +91,6 @@
         </ion-col>
         <ion-col col-3>
           <div>
-            <button ion-button color="light" (click)="sendToTotalModal()">Пречек</button>
-            <button ion-button color="light">Выбить чек</button>
-            <button ion-button (click)="changeTable()">Перенести</button>
-            <button ion-button (click)="sendNotes()">Функции чека</button>
-
             <ion-card *ngFor="let total of totalScoreService" [ngStyle]="(total.statusOrder) === false?{backgroundColor:'red'}:{backgroundColor:'white'}">
               <ion-card-header >
                 {{total.name}}
@@ -107,17 +113,8 @@
 <ion-footer>
   <ion-grid>
     <ion-row>
-      <ion-col col-3>
-        <button ion-button (click)="showSumAndDiscount()"> Показать скидку </button>
-      </ion-col>
-      <ion-col col-3>
+      <ion-col>
         <h1> Cумма: {{getResultPrice()}} </h1>
-      </ion-col>
-      <ion-col col-3 *ngIf="statusSum">
-        <h1> Скидка: {{discountInfo.percent}} %</h1>
-      </ion-col>
-      <ion-col col-3 *ngIf="statusSum">
-        <h1> Сумма со скидкой:{{discountInfo.totalSum}}</h1>
       </ion-col>
     </ion-row>
   </ion-grid>

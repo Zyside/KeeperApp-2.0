@@ -28,12 +28,15 @@ export class EditTablePage {
   totalScoreService:any;
   discountInfo:object;
   statusSum:boolean = false;
+  discount:any;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
               private orderService:OrderService, public modalCtrl: ModalController) {
     this.table = this.navParams.get('item');
     this.totalScoreService = this.orderService.getTotalScoreService();
-    this.kitchen = {
+    this.showDiscount();
+      console.log('xui------->',this.discountInfo);
+      this.kitchen = {
       'Японская' : [
         {
           name: 'Рол',
@@ -266,7 +269,7 @@ export class EditTablePage {
   }
 
   sendNotes() {
-    let profileModal = this.modalCtrl.create(EditModalPage,{totalSum:this.getResultPrice()});
+    let profileModal = this.modalCtrl.create(EditModalPage,{totalSum:this.getResultPrice(), table:this.table});
     profileModal.present();
   }
 
@@ -290,25 +293,13 @@ export class EditTablePage {
 
   checkItemForTotalModal(object, array) {
     for(let i=0; i<array.length; i++){
-      console.log('length', array.length)
-      console.log('i', i)
+      console.log('length', array.length);
+      console.log('i', i);
       if (array[i].name === object.name){
         return i;
       }
     }
     return -1;
-  }
-
-  checkItemTest(item, array) {
-    console.log('check item');
-    for(let i=0; i<array.length; i++){
-      console.log('length', array.length)
-      console.log('i', i)
-      if (array[i].name === item.name){
-        return i;
-      }
-    }
-    return -1
   }
 
   getResultPrice() {
@@ -369,6 +360,16 @@ export class EditTablePage {
         return
       } else if(this.discountInfo['percent'] === 0 ) {
         this.discountInfo = this.orderService.getDiscount();
+      }
+  }
+
+  showDiscount(){
+    let allOrders = this.orderService.getData();
+      for(let i=0; i < allOrders.length; i++){
+          if(allOrders[i]['name'] === this.table['name']){
+              this.discount = allOrders[i]['discount'];
+              console.log('discount', this.discount);
+          }
       }
   }
 }

@@ -1,17 +1,17 @@
-<!--
-  Generated template for the TotalModalPage page.
-
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
 <ion-header>
-
-  <ion-navbar>
-    <ion-title>Итоги</ion-title>
-  </ion-navbar>
-
+  <ion-grid>
+    <ion-row>
+      <ion-col col-6>
+        <ion-navbar>
+          <ion-title>Итоги</ion-title>
+        </ion-navbar>
+      </ion-col>
+      <ion-col col-6>
+        <h1> Cумма: {{sum}} </h1>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-header>
-
 
 <ion-content padding>
 
@@ -26,13 +26,16 @@
             <button ion-button color="dark" block>Закрыть смену</button>
           </ion-card-content>
       </ion-col>
-      <ion-col col-9>
-        <ion-col col-3>
-          <div *ngIf="showTotal">
-            <button ion-button>Открытые</button>
-            <button ion-button color="danger">Повторная печать</button>
-          </div>
-        </ion-col>
+      <ion-col col-9 *ngIf="showTotal">
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <button ion-button>Открытые</button>
+              <button ion-button color="danger">Повтop печать</button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
         <ion-col col-6>
           <div *ngIf="showTotal">
 
@@ -43,14 +46,18 @@
                   <th>№ Стола</th>
                   <th>Время</th>
                   <th>Сумма</th>
+                  <th>Процент</th>
+                  <th>Скидка</th>
                 </tr>
                     <tr *ngFor="let data of dataArr;let i = index" (click)="showInfoAboutOrder(data)">
-                    <td>Jill</td>
-                    <td>{{i+1}}</td>
-                    <td>{{data?.name}}</td>
-                    <td>{{data?.time | date:'short'}}</td>
-                    <td>{{data?.sum}} грн</td>
-                  </tr>
+                        <td>Jill</td>
+                        <td>{{i+1}}</td>
+                        <td>{{data?.name}}</td>
+                        <td>{{data?.time | date:'short'}}</td>
+                        <td>{{data?.sum}} грн</td>
+                        <td>{{data?.percent}} %</td>
+                        <td>{{data.sumWithDiscount}} грн</td>
+                    </tr>
               </table>
           </div>
         </ion-col>
@@ -82,10 +89,16 @@
 <ion-footer>
   <ion-grid>
     <ion-row>
-      <ion-col col-8>
-      </ion-col>
-      <ion-col col-4>
-        <h1> Cумма: {{sum}} </h1>
+      <ion-col col-12>
+        <button ion-button (click)="discountButton(5)" [disabled]="status === false">5%</button>
+        <button ion-button (click)="discountButton(10)" [disabled]="status === false">10%</button>
+        <button ion-button (click)="discountButton(15)" [disabled]="status === false">15%</button>
+        <button ion-button (click)="discountButton(20)" [disabled]="status === false">20%</button>
+        <button ion-button (click)="discountButton(25)" [disabled]="status === false">25%</button>
+        <button ion-button (click)="discountButton(30)" [disabled]="status === false">30%</button>
+        <button ion-button (click)="discountButton(40)" [disabled]="status === false">40%</button>
+        <button ion-button (click)="discountButton(50)" [disabled]="status === false">50%</button>
+        <button ion-button (click)="discountButton(100)" [disabled]="status === false">100%</button>
       </ion-col>
     </ion-row>
   </ion-grid>

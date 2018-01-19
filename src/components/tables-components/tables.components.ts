@@ -44,6 +44,4 @@ export class TablesComponent {
     }
     return -1
   }
-
-
 }

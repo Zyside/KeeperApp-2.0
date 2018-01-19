@@ -1,16 +1,8 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {OrderService} from "../../services/order.service";
-import {EditTablePage} from "../edit-table/edit-table";
 import {TablesPage} from "../tables/tables";
 import {LoadingService} from "../../services/loading-service";
-
-/**
- * Generated class for the ChangeTablePage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
 
 @IonicPage()
 @Component({
@@ -33,6 +25,7 @@ export class ChangeTablePage {
         this.currentTable = this.navParams.get('currentTable');
         this.orderFrom = this.orderService.getData();
         this.tableWithOrder = this.orderService.getTotalScoreService();
+        this.deleteEmtyOrder();
         console.log('order:', this.orderFrom);
         console.log('table:', this.table);
         console.log('currentTable', this.currentTable);
@@ -49,9 +42,6 @@ export class ChangeTablePage {
             if (this.tableWithOrder[this.tableWithOrder.indexOf(linkItem)]['count'] !== 0) {
                 this.tableWithOrder[this.tableWithOrder.indexOf(linkItem)]['sum'] -= order['price'];
                 this.tableWithOrder[this.tableWithOrder.indexOf(linkItem)]['count'] -= 1;
-                console.log('this.tableWithOrder.indexOf(linkItem)[\'count\']', this.tableWithOrder.indexOf(linkItem));
-                console.log('this.tableWithOrder,', this.tableWithOrder);
-
                 this.changedTable[index]['count'] += 1;
                 this.changedTable[index]['sum'] += order['price'];
             }
@@ -72,6 +62,7 @@ export class ChangeTablePage {
         if (this.tableWithOrder[this.tableWithOrder.indexOf(linkItem)]['sum'] === 0) {
             this.tableWithOrder.splice(this.tableWithOrder.indexOf(linkItem), 1);
         }
+        this.deleteEmtyOrder();
     }
 
     backShiftOrder(linkItem) {
@@ -81,9 +72,6 @@ export class ChangeTablePage {
             if (this.changedTable[this.changedTable.indexOf(linkItem)]['count'] !== 0) {
                 this.changedTable[this.changedTable.indexOf(linkItem)]['sum'] -= order['price'];
                 this.changedTable[this.changedTable.indexOf(linkItem)]['count'] -= 1;
-                if (this.changedTable[this.changedTable.indexOf(linkItem)]['count'] === 0) {
-                    this.changedTable.splice(this.changedTable.indexOf(linkItem), 1);
-                }
                 this.tableWithOrder[index]['count'] += 1;
                 this.tableWithOrder[index]['sum'] += order['price'];
             }
@@ -167,7 +155,6 @@ export class ChangeTablePage {
 
     acceptChanges(){
         let allOrders = this.orderService.getData();
-        console.log('allOrders', allOrders);
         if(this.changedTable.length !== 0){
             this.table['order'] = this.changedTable;
             this.table['time'] = new Date();
@@ -176,8 +163,6 @@ export class ChangeTablePage {
                 if(this.tableWithOrder.length === 0 && allOrders[i]['name'] === this.currentTable['name']){
                     this.orderService.deleteItemData(i);
                 }
-                console.log('this.table[\'name\']',this.table);
-                console.log('allOrders[i][\'name\'] ',allOrders[i]);
                 for(let j=0; j<allOrders.length;j++) {
                     if (allOrders[j]['name'] === this.table['name']) {
                         this.orderService.deleteItemData(j);
@@ -190,7 +175,6 @@ export class ChangeTablePage {
             this.loadingService.showLoading();
             this.navCtrl.push(TablesPage,{status:this.status});
             this.loadingService.closeLoading();
-            console.log('acceptChangesTABLE',this.table);
         } else {
             alert('Стол пуст!!');
         }
@@ -202,16 +186,12 @@ export class ChangeTablePage {
         }, 0);
     }
 
-    checkItem(arr, array) {
-        for(let i=0; i<array.length; i++) {
-            for(let j=0; j<arr.length; j++) {
-                if (array[i].name === arr[j].name) {
-                    return i;
-                }
-                console.log('length', array.length);
-                console.log('i', i);
+
+    deleteEmtyOrder(){
+        for(let i=0; i< this.orderFrom.length; i++) {
+            if(this.orderFrom[i]['sum'] === 0 ) {
+                this.orderFrom.splice(i,1);
             }
         }
-        return -1
     }
 }

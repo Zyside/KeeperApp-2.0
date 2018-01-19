@@ -55,6 +55,7 @@ export class OrderService{
     this.totalScoreService.push(item);
 
   }
+
   deleteTotalScoreService(){
     this.totalScoreService.length = 0;
   }
